@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Movie Details</title>
   <style>
     body {
@@ -10,62 +10,201 @@
       color: #fff;
       font-family: Arial, sans-serif;
       padding: 20px;
-    }
-    .container {
-      max-width: 800px;
+      max-width: 900px;
       margin: auto;
-    }
-    .poster {
-      width: 100%;
-      max-width: 300px;
-      border-radius: 10px;
     }
     h1 {
       color: #ffcc00;
+      margin-bottom: 10px;
+      text-align: center;
     }
-    .download-btn {
+    .poster {
+      float: left;
+      margin-right: 20px;
+      border-radius: 10px;
+      width: 250px;
+    }
+    .details {
+      overflow: hidden;
+    }
+    .overview {
+      margin-top: 20px;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    .section {
+      margin-top: 30px;
+    }
+    .section h2 {
+      border-bottom: 2px solid #ffcc00;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+    }
+    .screenshots {
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+    }
+    .screenshots img {
+      border-radius: 8px;
+      height: 120px;
+    }
+    .cast-list {
+      display: flex;
+      overflow-x: auto;
+      gap: 15px;
+    }
+    .cast-item {
+      text-align: center;
+      width: 100px;
+    }
+    .cast-item img {
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+    }
+    .ad-link {
+      display: block;
       background-color: #ffcc00;
       color: #000;
-      padding: 12px 20px;
-      border-radius: 5px;
-      text-decoration: none;
+      text-align: center;
+      padding: 15px;
+      border-radius: 8px;
       font-weight: bold;
+      margin-top: 40px;
+      text-decoration: none;
+    }
+    .back-link {
+      color: #ffcc00;
+      text-decoration: none;
       display: inline-block;
-      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    .rating {
+      font-size: 18px;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div id="movie-details"></div>
+  <a class="back-link" href="index.html">&larr; Back to Reviews</a>
+  <h1 id="title">Loading...</h1>
+  <img id="poster" class="poster" src="" alt="Poster" />
+  <div class="details">
+    <p><strong>Release Date:</strong> <span id="date"></span></p>
+    <p class="rating"><strong>Rating:</strong> ⭐ <span id="rating"></span> / 10</p>
+    <div class="overview" id="overview"></div>
   </div>
+
+  <div class="section" id="screenshots-section" style="display:none;">
+    <h2>Screenshots</h2>
+    <div class="screenshots" id="screenshots"></div>
+  </div>
+
+  <div class="section" id="cast-section" style="display:none;">
+    <h2>Cast</h2>
+    <div class="cast-list" id="cast-list"></div>
+  </div>
+
+  <div class="section" id="reviews-section" style="display:none;">
+    <h2>User Reviews</h2>
+    <div id="reviews"></div>
+  </div>
+
+  <a class="ad-link" href="https://www.profitableratecpm.com/i8qmzz1p?key=89e145d892a498d83ea6c3fdaf64e12a" target="_blank" rel="noopener noreferrer">
+    ✨ Help us generate more reviews – Click here
+  </a>
 
   <script>
     const apiKey = "97d6ca828654b15d8222197a0c5fcae5";
-    const adLink = "https://www.profitableratecpm.com/i8qmzz1p?key=89e145d892a498d83ea6c3fdaf64e12a";
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    const type = params.get("type") || "movie";
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const movieId = urlParams.get("id");
-
-    async function loadMovie() {
-      const res = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}`);
-      const movie = await res.json();
-
-      const poster = movie.poster_path ? `https://image.tmdb.org/t/p/w300${movie.poster_path}` : "";
-
-      const html = `
-        <img class="poster" src="${poster}" alt="${movie.title}">
-        <h1>${movie.title}</h1>
-        <p><strong>Release Date:</strong> ${movie.release_date}</p>
-        <p><strong>Rating:</strong> ⭐ ${movie.vote_average}/10</p>
-        <p><strong>Overview:</strong> ${movie.overview}</p>
-        <a class="download-btn" href="${adLink}" target="_blank">Download Now</a>
-      `;
-
-      document.getElementById("movie-details").innerHTML = html;
+    if (!id) {
+      document.body.innerHTML = "<h1>Invalid movie/show ID</h1>";
+      throw new Error("No ID provided");
     }
 
-    loadMovie();
+    async function fetchDetails() {
+      const detailsUrl = `https://api.themoviedb.org/3/${type}/${id}?api_key=${apiKey}&language=en-US`;
+      const creditsUrl = `https://api.themoviedb.org/3/${type}/${id}/credits?api_key=${apiKey}`;
+      const imagesUrl = `https://api.themoviedb.org/3/${type}/${id}/images?api_key=${apiKey}`;
+      const reviewsUrl = `https://api.themoviedb.org/3/${type}/${id}/reviews?api_key=${apiKey}&language=en-US&page=1`;
+
+      const [detailsRes, creditsRes, imagesRes, reviewsRes] = await Promise.all([
+        fetch(detailsUrl),
+        fetch(creditsUrl),
+        fetch(imagesUrl),
+        fetch(reviewsUrl)
+      ]);
+
+      const details = await detailsRes.json();
+      const credits = await creditsRes.json();
+      const images = await imagesRes.json();
+      const reviews = await reviewsRes.json();
+
+      document.getElementById("title").textContent = details.title || details.name || "No title";
+      document.getElementById("poster").src = details.poster_path ? `https://image.tmdb.org/t/p/w400${details.poster_path}` : "";
+      document.getElementById("poster").alt = details.title || details.name;
+
+      document.getElementById("date").textContent = details.release_date || details.first_air_date || "N/A";
+      document.getElementById("rating").textContent = details.vote_average || "N/A";
+      document.getElementById("overview").textContent = details.overview || "No overview available.";
+
+      // Screenshots
+      if (images.backdrops && images.backdrops.length > 0) {
+        const screenshotsSection = document.getElementById("screenshots-section");
+        const screenshotsDiv = document.getElementById("screenshots");
+        screenshotsDiv.innerHTML = "";
+        images.backdrops.slice(0, 8).forEach(img => {
+          const imgEl = document.createElement("img");
+          imgEl.src = `https://image.tmdb.org/t/p/w500${img.file_path}`;
+          imgEl.alt = "Screenshot";
+          screenshotsDiv.appendChild(imgEl);
+        });
+        screenshotsSection.style.display = "block";
+      }
+
+      // Cast
+      if (credits.cast && credits.cast.length > 0) {
+        const castSection = document.getElementById("cast-section");
+        const castList = document.getElementById("cast-list");
+        castList.innerHTML = "";
+        credits.cast.slice(0, 10).forEach(person => {
+          const castItem = document.createElement("div");
+          castItem.className = "cast-item";
+          castItem.innerHTML = `
+            <img src="${person.profile_path ? `https://image.tmdb.org/t/p/w185${person.profile_path}` : 'https://via.placeholder.com/80x80?text=No+Image'}" alt="${person.name}">
+            <p>${person.name}</p>
+            <p style="font-size:12px;color:#ccc;">as ${person.character}</p>
+          `;
+          castList.appendChild(castItem);
+        });
+        castSection.style.display = "block";
+      }
+
+      // Reviews
+      if (reviews.results && reviews.results.length > 0) {
+        const reviewsSection = document.getElementById("reviews-section");
+        const reviewsDiv = document.getElementById("reviews");
+        reviewsDiv.innerHTML = "";
+        reviews.results.forEach(review => {
+          const reviewEl = document.createElement("div");
+          reviewEl.style.marginBottom = "15px";
+          reviewEl.innerHTML = `
+            <p><strong>${review.author}:</strong></p>
+            <p>${review.content}</p>
+            <hr style="border-color:#444" />
+          `;
+          reviewsDiv.appendChild(reviewEl);
+        });
+        reviewsSection.style.display = "block";
+      }
+    }
+
+    fetchDetails();
   </script>
 </body>
 </html>
