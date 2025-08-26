@@ -1,94 +1,87 @@
+
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Movie Reviews</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Latest Movies Download</title>
   <style>
     body {
-      background-color: #121212;
-      color: white;
+      background-color: #0f0f0f;
+      color: #fff;
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      text-align: center;
       padding: 20px;
-      background-color: #1a1a1a;
     }
-    header h1 {
-      margin: 0;
-      font-size: 2.5rem;
+    h1 {
+      text-align: center;
+      color: #ffcc00;
     }
     .movie {
+      background-color: #1a1a1a;
+      margin: 15px 0;
+      padding: 15px;
+      border-radius: 10px;
       display: flex;
-      justify-content: center;
       align-items: center;
-      margin: 20px;
-      padding: 10px;
-      background-color: #1a1a1a;
-      border-radius: 8px;
     }
-    .movie img {
-      max-width: 150px;
-      margin-right: 20px;
-      border-radius: 8px;
+    .poster {
+      width: 100px;
+      margin-right: 15px;
+      border-radius: 5px;
     }
-    .movie-details {
-      max-width: 600px;
+    .info {
+      flex: 1;
     }
-    .movie-details h2 {
+    .info h3 {
       margin: 0;
-      font-size: 1.5rem;
+      color: #ff9900;
     }
-    .movie-details p {
-      margin: 5px 0;
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
-      background-color: #1a1a1a;
-      position: fixed;
-      width: 100%;
-      bottom: 0;
+    .download-btn {
+      background-color: #ffcc00;
+      color: #000;
+      padding: 10px 15px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 10px;
+      display: inline-block;
     }
   </style>
 </head>
 <body>
+  <h1>🔥 Latest Trending Movies</h1>
+  <div id="movies"></div>
 
-<header>
-  <h1>Movie Reviews</h1>
-</header>
+  <script>
+    const apiKey = "97d6ca828654b15d8222197a0c5fcae5";
 
-<main>
-  <div class="movie">
-    <img src="movie-poster.jpg" alt="Movie Poster">
-    <div class="movie-details">
-      <h2>Movie Title</h2>
-      <p><strong>Release Date:</strong> 2025-08-26</p>
-      <p><strong>Rating:</strong> ⭐ 4.5/5</p>
-      <p><strong>Overview:</strong> A brief description of the movie plot...</p>
-    </div>
-  </div>
-</main>
+    async function loadMovies() {
+      const res = await fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=${apiKey}`);
+      const data = await res.json();
 
-<footer>
-  <p>Disclaimer: Yeh website sirf movie reviews provide karti hai, downloads nahi.</p>
-  <p>Help us to generate reviews by clicking here: <a href="https://www.adsterra.com" style="color: #ff9900;">Adsterra</a></p>
-</footer>
+      const sorted = data.results.sort((a, b) => new Date(b.release_date) - new Date(a.release_date));
 
-<!-- Adsterra Ad Code -->
-<script type="text/javascript">
-  atOptions = {
-    'key' : 'your_adsterra_key',
-    'format' : 'iframe',
-    'height' : 90,
-    'width' : 728,
-    'params' : {}
-};
-document.write('<script type="text/javascript" src="https://www.adsterra.com/static/ban/ban.js"></script>');
-</script>
+      const container = document.getElementById("movies");
+      container.innerHTML = "";
 
+      sorted.forEach(movie => {
+        const poster = movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : "";
+
+        const movieDiv = document.createElement("div");
+        movieDiv.className = "movie";
+        movieDiv.innerHTML = `
+          <img class="poster" src="${poster}" alt="${movie.title}" />
+          <div class="info">
+            <h3>${movie.title}</h3>
+            <p>Release: ${movie.release_date}</p>
+            <a class="download-btn" href="movie.html?id=${movie.id}">Download</a>
+          </div>
+        `;
+        container.appendChild(movieDiv);
+      });
+    }
+
+    loadMovies();
+  </script>
 </body>
 </html>
