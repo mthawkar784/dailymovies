@@ -1,107 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Movie & Web Series Reviews</title>
+  <title>Latest Movies & Web Series</title>
   <style>
     body {
       background-color: #0f0f0f;
       color: #fff;
       font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      background: #1a1a1a;
+      color: #ffcc00;
+      font-size: 28px;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    /* 🔥 Gallery Grid */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 15px;
       padding: 20px;
     }
-    h1 {
+
+    /* Each Card */
+    .card {
+      background: #1a1a1a;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.3s;
+      cursor: pointer;
+      position: relative;
+    }
+    .card:hover {
+      transform: scale(1.08);
+      z-index: 10;
+    }
+
+    /* Poster Image */
+    .poster {
+      width: 100%;
+      height: 270px;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Info Overlay */
+    .info {
+      padding: 10px;
       text-align: center;
-      color: #ffcc00;
-    }
-    .movie {
-      background-color: #1a1a1a;
-      margin: 15px 0;
-      padding: 15px;
-      border-radius: 10px;
-      display: flex;
-      flex-direction: column;
-    }
-    .movie img {
-      width: 200px;
-      border-radius: 5px;
-      margin-bottom: 10px;
     }
     .info h3 {
-      color: #ff9900;
-      margin: 0 0 5px 0;
+      margin: 5px 0;
+      font-size: 15px;
+      color: #ffcc00;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .info p {
-      margin: 5px 0;
+      margin: 0;
+      font-size: 13px;
+      color: #aaa;
     }
-    .ad-link {
-      background-color: #ffcc00;
-      color: #000;
-      padding: 10px 15px;
-      border-radius: 5px;
-      text-decoration: none;
+    .rating {
+      color: #00ff99;
       font-weight: bold;
-      display: inline-block;
-      margin-top: 10px;
     }
+
+    /* Disclaimer */
     .disclaimer {
-      margin-top: 40px;
-      font-size: 14px;
+      background: #222;
+      color: #ff5555;
+      padding: 15px;
+      margin-top: 20px;
       text-align: center;
-      color: #999;
+      font-size: 14px;
+      border-top: 1px solid #ff5555;
     }
   </style>
 </head>
 <body>
-  <h1>🎬 Movie & Web Series Reviews</h1>
-  <div id="movies"></div>
+  <header>🔥 Movies & Web Series Gallery</header>
+
+  <!-- Gallery Section -->
+  <div id="gallery" class="gallery"></div>
 
   <div class="disclaimer">
-    <p><strong>Disclaimer:</strong> This is a review website. We do not host or provide any download links. All content is informational and sourced from public APIs.</p>
+    ⚠️ Disclaimer: This site does not host or provide any movie/series files.  
+    All details and posters are fetched from TMDb API for **informational purposes only**.
   </div>
 
   <script>
     const apiKey = "97d6ca828654b15d8222197a0c5fcae5";
-    const adLink = "https://www.profitableratecpm.com/i8qmzz1p?key=89e145d892a498d83ea6c3fdaf64e12a";
 
-    async function loadReviews() {
-      const container = document.getElementById("movies");
+    // Fetch 100+ Movies & Web Series
+    async function fetchData(pages = 5) {
+      let results = [];
 
-      // Fetch trending movies
-      const movieRes = await fetch(`https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}`);
-      const tvRes = await fetch(`https://api.themoviedb.org/3/trending/tv/week?api_key=${apiKey}`);
-      const movies = (await movieRes.json()).results;
-      const shows = (await tvRes.json()).results;
+      // Movies
+      for (let i = 1; i <= pages; i++) {
+        const res = await fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=${apiKey}&page=${i}`);
+        const data = await res.json();
+        results = results.concat(data.results);
+      }
 
-      const all = [...movies, ...shows];
+      // TV Shows
+      for (let i = 1; i <= pages; i++) {
+        const res = await fetch(`https://api.themoviedb.org/3/trending/tv/day?api_key=${apiKey}&page=${i}`);
+        const data = await res.json();
+        results = results.concat(data.results);
+      }
 
-      all.sort((a, b) => new Date(b.release_date || b.first_air_date) - new Date(a.release_date || a.first_air_date));
+      return results;
+    }
 
-      all.forEach(item => {
+    // Render Gallery
+    function renderGallery(list) {
+      const container = document.getElementById("gallery");
+      container.innerHTML = "";
+
+      list.forEach(item => {
         const title = item.title || item.name;
-        const date = item.release_date || item.first_air_date || 'N/A';
-        const poster = item.poster_path ? `https://image.tmdb.org/t/p/w200${item.poster_path}` : '';
-        const rating = item.vote_average || "N/A";
-        const overview = item.overview || "No review available.";
+        const date = item.release_date || item.first_air_date || "N/A";
+        const rating = item.vote_average ? item.vote_average.toFixed(1) : "N/A";
+        const poster = item.poster_path ? `https://image.tmdb.org/t/p/w300${item.poster_path}` : "https://via.placeholder.com/300x450?text=No+Image";
 
-        const div = document.createElement("div");
-        div.className = "movie";
-        div.innerHTML = `
-          <img src="${poster}" alt="${title}">
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <img class="poster" src="${poster}" alt="${title}" />
           <div class="info">
             <h3>${title}</h3>
-            <p><strong>Release Date:</strong> ${date}</p>
-            <p><strong>Rating:</strong> ⭐ ${rating}/10</p>
-            <p><strong>Review:</strong> ${overview}</p>
-            <a class="ad-link" href="${adLink}" target="_blank">✨ Help us generate more reviews – Click here</a>
+            <p>⭐ <span class="rating">${rating}</span> | 📅 ${date}</p>
           </div>
         `;
-        container.appendChild(div);
+        container.appendChild(card);
       });
     }
 
-    loadReviews();
+    async function loadGallery() {
+      const items = await fetchData(5); // 5 pages = 100 movies + 100 series
+      renderGallery(items);
+    }
+
+    loadGallery();
   </script>
 </body>
 </html>
