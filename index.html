@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Movie & Web Series Reviews</title>
   <style>
     body {
@@ -15,35 +15,39 @@
       text-align: center;
       color: #ffcc00;
     }
-    .movie {
-      background-color: #1a1a1a;
-      margin: 15px 0;
-      padding: 15px;
-      border-radius: 10px;
+    .movie-list {
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
     }
-    .movie img {
-      width: 200px;
-      border-radius: 5px;
-      margin-bottom: 10px;
+    .movie-card {
+      background-color: #1a1a1a;
+      border-radius: 10px;
+      width: 180px;
+      cursor: pointer;
+      text-align: center;
+      transition: transform 0.3s ease;
     }
-    .info h3 {
+    .movie-card:hover {
+      transform: scale(1.05);
+    }
+    .movie-card img {
+      width: 100%;
+      border-radius: 10px 10px 0 0;
+    }
+    .movie-card h3 {
       color: #ff9900;
-      margin: 0 0 5px 0;
+      font-size: 16px;
+      margin: 10px 0 5px 0;
+      padding: 0 10px;
+      height: 40px;
+      overflow: hidden;
     }
-    .info p {
-      margin: 5px 0;
-    }
-    .ad-link {
-      background-color: #ffcc00;
-      color: #000;
-      padding: 10px 15px;
-      border-radius: 5px;
-      text-decoration: none;
-      font-weight: bold;
-      display: inline-block;
-      margin-top: 10px;
+    .movie-card p {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      color: #ccc;
     }
     .disclaimer {
       margin-top: 40px;
@@ -55,7 +59,7 @@
 </head>
 <body>
   <h1>🎬 Movie & Web Series Reviews</h1>
-  <div id="movies"></div>
+  <div class="movie-list" id="movie-list"></div>
 
   <div class="disclaimer">
     <p><strong>Disclaimer:</strong> This is a review website. We do not host or provide any download links. All content is informational and sourced from public APIs.</p>
@@ -63,14 +67,11 @@
 
   <script>
     const apiKey = "97d6ca828654b15d8222197a0c5fcae5";
-    const adLink = "https://www.profitableratecpm.com/i8qmzz1p?key=89e145d892a498d83ea6c3fdaf64e12a";
 
-    async function loadReviews() {
-      const container = document.getElementById("movies");
-
-      // Fetch trending movies
+    async function fetchTrending() {
       const movieRes = await fetch(`https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}`);
       const tvRes = await fetch(`https://api.themoviedb.org/3/trending/tv/week?api_key=${apiKey}`);
+
       const movies = (await movieRes.json()).results;
       const shows = (await tvRes.json()).results;
 
@@ -78,30 +79,31 @@
 
       all.sort((a, b) => new Date(b.release_date || b.first_air_date) - new Date(a.release_date || a.first_air_date));
 
+      const container = document.getElementById("movie-list");
       all.forEach(item => {
         const title = item.title || item.name;
         const date = item.release_date || item.first_air_date || 'N/A';
-        const poster = item.poster_path ? `https://image.tmdb.org/t/p/w200${item.poster_path}` : '';
-        const rating = item.vote_average || "N/A";
-        const overview = item.overview || "No review available.";
+        const poster = item.poster_path ? `https://image.tmdb.org/t/p/w300${item.poster_path}` : '';
+        const id = item.id;
+        const type = item.media_type || (item.title ? "movie" : "tv");
 
-        const div = document.createElement("div");
-        div.className = "movie";
-        div.innerHTML = `
+        const card = document.createElement("div");
+        card.className = "movie-card";
+        card.innerHTML = `
           <img src="${poster}" alt="${title}">
-          <div class="info">
-            <h3>${title}</h3>
-            <p><strong>Release Date:</strong> ${date}</p>
-            <p><strong>Rating:</strong> ⭐ ${rating}/10</p>
-            <p><strong>Review:</strong> ${overview}</p>
-            <a class="ad-link" href="${adLink}" target="_blank">✨ Help us generate more reviews – Click here</a>
-          </div>
+          <h3>${title}</h3>
+          <p>Release: ${date}</p>
         `;
-        container.appendChild(div);
+
+        card.onclick = () => {
+          window.location.href = `movie.html?id=${id}&type=${type}`;
+        };
+
+        container.appendChild(card);
       });
     }
 
-    loadReviews();
+    fetchTrending();
   </script>
 </body>
 </html>
