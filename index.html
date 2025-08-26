@@ -2,108 +2,121 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Movie & Web Series Reviews</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Categories</title>
   <style>
     body {
-      background-color: #0f0f0f;
-      color: #fff;
       font-family: Arial, sans-serif;
-      padding: 20px;
+      background-color: #121212;
+      color: white;
+      margin: 0;
+      padding: 0;
     }
-    h1 {
-      text-align: center;
-      color: #ffcc00;
-    }
-    .movie-list {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-    }
-    .movie-card {
-      background-color: #1a1a1a;
-      border-radius: 10px;
-      width: 180px;
-      cursor: pointer;
-      text-align: center;
-      transition: transform 0.3s ease;
-    }
-    .movie-card:hover {
-      transform: scale(1.05);
-    }
-    .movie-card img {
-      width: 100%;
-      border-radius: 10px 10px 0 0;
-    }
-    .movie-card h3 {
-      color: #ff9900;
-      font-size: 16px;
-      margin: 10px 0 5px 0;
-      padding: 0 10px;
-      height: 40px;
+    nav {
+      background-color: #333;
       overflow: hidden;
     }
-    .movie-card p {
-      margin: 0 0 10px 0;
-      font-size: 14px;
-      color: #ccc;
-    }
-    .disclaimer {
-      margin-top: 40px;
-      font-size: 14px;
+    nav a {
+      float: left;
+      display: block;
+      color: white;
       text-align: center;
-      color: #999;
+      padding: 14px 20px;
+      text-decoration: none;
+      font-size: 17px;
+    }
+    nav a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+    nav .dropdown {
+      float: left;
+      overflow: hidden;
+    }
+    nav .dropdown .dropbtn {
+      font-size: 17px;
+      border: none;
+      outline: none;
+      color: white;
+      padding: 14px 20px;
+      background-color: inherit;
+      font-family: inherit;
+      margin: 0;
+    }
+    nav a:hover, nav .dropdown:hover .dropbtn {
+      background-color: #ddd;
+      color: black;
+    }
+    nav .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #333;
+      min-width: 160px;
+      z-index: 1;
+    }
+    nav .dropdown-content a {
+      color: white;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+    nav .dropdown-content a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+    nav .dropdown:hover .dropdown-content {
+      display: block;
     }
   </style>
 </head>
 <body>
-  <h1>🎬 Movie & Web Series Reviews</h1>
-  <div class="movie-list" id="movie-list"></div>
 
-  <div class="disclaimer">
-    <p><strong>Disclaimer:</strong> This is a review website. We do not host or provide any download links. All content is informational and sourced from public APIs.</p>
+<nav>
+  <a href="#home">Home</a>
+  <div class="dropdown">
+    <button class="dropbtn">Movies</button>
+    <div class="dropdown-content">
+      <a href="#latest">Latest Released</a>
+      <a href="#hindi">Hindi Movies</a>
+      <a href="#english">English Movies</a>
+      <a href="#dubbed">Dubbed Movies</a>
+      <a href="#asian">Asian Movies</a>
+      <a href="#hollywood">Hollywood</a>
+      <a href="#adult">Adult Movies</a>
+      <a href="#hacking">Hacking Movies</a>
+      <a href="#multi">Multi Movies</a>
+    </div>
   </div>
+  <div class="dropdown">
+    <button class="dropbtn">Genre</button>
+    <div class="dropdown-content">
+      <a href="#action">Action</a>
+      <a href="#adventure">Adventure</a>
+      <a href="#animated">Animated</a>
+      <a href="#comedy">Comedy</a>
+      <a href="#crime">Crime</a>
+      <a href="#fantasy">Fantasy</a>
+      <a href="#horror">Horror</a>
+      <a href="#mystery">Mystery</a>
+      <a href="#romance">Romance</a>
+      <a href="#sci-fi">Sci-Fi</a>
+      <a href="#thriller">Thriller</a>
+    </div>
+  </div>
+  <div class="dropdown">
+    <button class="dropbtn">Quality</button>
+    <div class="dropdown-content">
+      <a href="#dvdscr">DVDScr</a>
+      <a href="#dvdrip">DVDRip</a>
+      <a href="#hdrip">HDRip</a>
+      <a href="#brrip">BRRip</a>
+    </div>
+  </div>
+</nav>
 
-  <script>
-    const apiKey = "97d6ca828654b15d8222197a0c5fcae5";
+<script>
+  // JavaScript to handle dynamic category loading can be added here
+</script>
 
-    async function fetchTrending() {
-      const movieRes = await fetch(`https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}`);
-      const tvRes = await fetch(`https://api.themoviedb.org/3/trending/tv/week?api_key=${apiKey}`);
-
-      const movies = (await movieRes.json()).results;
-      const shows = (await tvRes.json()).results;
-
-      const all = [...movies, ...shows];
-
-      all.sort((a, b) => new Date(b.release_date || b.first_air_date) - new Date(a.release_date || a.first_air_date));
-
-      const container = document.getElementById("movie-list");
-      all.forEach(item => {
-        const title = item.title || item.name;
-        const date = item.release_date || item.first_air_date || 'N/A';
-        const poster = item.poster_path ? `https://image.tmdb.org/t/p/w300${item.poster_path}` : '';
-        const id = item.id;
-        const type = item.media_type || (item.title ? "movie" : "tv");
-
-        const card = document.createElement("div");
-        card.className = "movie-card";
-        card.innerHTML = `
-          <img src="${poster}" alt="${title}">
-          <h3>${title}</h3>
-          <p>Release: ${date}</p>
-        `;
-
-        card.onclick = () => {
-          window.location.href = `movie.html?id=${id}&type=${type}`;
-        };
-
-        container.appendChild(card);
-      });
-    }
-
-    fetchTrending();
-  </script>
 </body>
 </html>
