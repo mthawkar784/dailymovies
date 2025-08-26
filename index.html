@@ -4,91 +4,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Movie Reviews</title>
-  <style>
-    body {
-      background-color: #121212;
-      color: white;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      text-align: center;
-      padding: 20px;
-      background-color: #1a1a1a;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 2.5rem;
-    }
-    .movie {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 20px;
-      padding: 10px;
-      background-color: #1a1a1a;
-      border-radius: 8px;
-    }
-    .movie img {
-      max-width: 150px;
-      margin-right: 20px;
-      border-radius: 8px;
-    }
-    .movie-details {
-      max-width: 600px;
-    }
-    .movie-details h2 {
-      margin: 0;
-      font-size: 1.5rem;
-    }
-    .movie-details p {
-      margin: 5px 0;
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
-      background-color: #1a1a1a;
-      position: fixed;
-      width: 100%;
-      bottom: 0;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <header>
+    <h1>Movie Reviews</h1>
+    <nav>
+      <ul>
+        <li><a href="#bollywood">Bollywood</a></li>
+        <li><a href="#hollywood">Hollywood</a></li>
+        <li><a href="#webseries">Web Series</a></li>
+      </ul>
+    </nav>
+  </header>
 
-<header>
-  <h1>Movie Reviews</h1>
-</header>
+  <main>
+    <section id="bollywood">
+      <h2>Bollywood Movies</h2>
+      <div id="bollywood-movies"></div>
+    </section>
 
-<main>
-  <div class="movie">
-    <img src="movie-poster.jpg" alt="Movie Poster">
-    <div class="movie-details">
-      <h2>Movie Title</h2>
-      <p><strong>Release Date:</strong> 2025-08-26</p>
-      <p><strong>Rating:</strong> ⭐ 4.5/5</p>
-      <p><strong>Overview:</strong> A brief description of the movie plot...</p>
-    </div>
-  </div>
-</main>
+    <section id="hollywood">
+      <h2>Hollywood Movies</h2>
+      <div id="hollywood-movies"></div>
+    </section>
 
-<footer>
-  <p>Disclaimer: Yeh website sirf movie reviews provide karti hai, downloads nahi.</p>
-  <p>Help us to generate reviews by clicking here: <a href="https://www.adsterra.com" style="color: #ff9900;">Adsterra</a></p>
-</footer>
+    <section id="webseries">
+      <h2>Web Series</h2>
+      <div id="webseries-list"></div>
+    </section>
+  </main>
 
-<!-- Adsterra Ad Code -->
-<script type="text/javascript">
-  atOptions = {
-    'key' : 'your_adsterra_key',
-    'format' : 'iframe',
-    'height' : 90,
-    'width' : 728,
-    'params' : {}
-};
-document.write('<script type="text/javascript" src="https://www.adsterra.com/static/ban/ban.js"></script>');
-</script>
+  <footer>
+    <p>Disclaimer: Yeh website sirf movie reviews provide karti hai, downloads nahi.</p>
+    <p>Help us to generate reviews by clicking here: <a href="https://www.adsterra.com" target="_blank">Adsterra</a></p>
+  </footer>
 
+  <script src="scripts.js"></script>
 </body>
 </html>
