@@ -2,121 +2,209 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Movie Categories</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Movie Details</title>
   <style>
     body {
+      background-color: #0f0f0f;
+      color: #fff;
       font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: white;
-      margin: 0;
-      padding: 0;
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
     }
-    nav {
-      background-color: #333;
-      overflow: hidden;
-    }
-    nav a {
-      float: left;
-      display: block;
-      color: white;
+    h1 {
+      color: #ffcc00;
+      margin-bottom: 10px;
       text-align: center;
-      padding: 14px 20px;
-      text-decoration: none;
-      font-size: 17px;
     }
-    nav a:hover {
-      background-color: #ddd;
-      color: black;
-    }
-    nav .dropdown {
+    .poster {
       float: left;
+      margin-right: 20px;
+      border-radius: 10px;
+      width: 250px;
+    }
+    .details {
       overflow: hidden;
     }
-    nav .dropdown .dropbtn {
-      font-size: 17px;
-      border: none;
-      outline: none;
-      color: white;
-      padding: 14px 20px;
-      background-color: inherit;
-      font-family: inherit;
-      margin: 0;
+    .overview {
+      margin-top: 20px;
+      font-size: 16px;
+      line-height: 1.5;
     }
-    nav a:hover, nav .dropdown:hover .dropbtn {
-      background-color: #ddd;
-      color: black;
+    .section {
+      margin-top: 30px;
     }
-    nav .dropdown-content {
-      display: none;
-      position: absolute;
-      background-color: #333;
-      min-width: 160px;
-      z-index: 1;
+    .section h2 {
+      border-bottom: 2px solid #ffcc00;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
     }
-    nav .dropdown-content a {
-      color: white;
-      padding: 12px 16px;
+    .screenshots {
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+    }
+    .screenshots img {
+      border-radius: 8px;
+      height: 120px;
+    }
+    .cast-list {
+      display: flex;
+      overflow-x: auto;
+      gap: 15px;
+    }
+    .cast-item {
+      text-align: center;
+      width: 100px;
+    }
+    .cast-item img {
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+    }
+    .ad-link {
+      display: block;
+      background-color: #ffcc00;
+      color: #000;
+      text-align: center;
+      padding: 15px;
+      border-radius: 8px;
+      font-weight: bold;
+      margin-top: 40px;
       text-decoration: none;
-      display: block;
     }
-    nav .dropdown-content a:hover {
-      background-color: #ddd;
-      color: black;
+    .back-link {
+      color: #ffcc00;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 20px;
     }
-    nav .dropdown:hover .dropdown-content {
-      display: block;
+    .rating {
+      font-size: 18px;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-
-<nav>
-  <a href="#home">Home</a>
-  <div class="dropdown">
-    <button class="dropbtn">Movies</button>
-    <div class="dropdown-content">
-      <a href="#latest">Latest Released</a>
-      <a href="#hindi">Hindi Movies</a>
-      <a href="#english">English Movies</a>
-      <a href="#dubbed">Dubbed Movies</a>
-      <a href="#asian">Asian Movies</a>
-      <a href="#hollywood">Hollywood</a>
-      <a href="#adult">Adult Movies</a>
-      <a href="#hacking">Hacking Movies</a>
-      <a href="#multi">Multi Movies</a>
-    </div>
+  <a class="back-link" href="index.html">&larr; Back to Reviews</a>
+  <h1 id="title">Loading...</h1>
+  <img id="poster" class="poster" src="" alt="Poster" />
+  <div class="details">
+    <p><strong>Release Date:</strong> <span id="date"></span></p>
+    <p class="rating"><strong>Rating:</strong> ⭐ <span id="rating"></span> / 10</p>
+    <div class="overview" id="overview"></div>
   </div>
-  <div class="dropdown">
-    <button class="dropbtn">Genre</button>
-    <div class="dropdown-content">
-      <a href="#action">Action</a>
-      <a href="#adventure">Adventure</a>
-      <a href="#animated">Animated</a>
-      <a href="#comedy">Comedy</a>
-      <a href="#crime">Crime</a>
-      <a href="#fantasy">Fantasy</a>
-      <a href="#horror">Horror</a>
-      <a href="#mystery">Mystery</a>
-      <a href="#romance">Romance</a>
-      <a href="#sci-fi">Sci-Fi</a>
-      <a href="#thriller">Thriller</a>
-    </div>
-  </div>
-  <div class="dropdown">
-    <button class="dropbtn">Quality</button>
-    <div class="dropdown-content">
-      <a href="#dvdscr">DVDScr</a>
-      <a href="#dvdrip">DVDRip</a>
-      <a href="#hdrip">HDRip</a>
-      <a href="#brrip">BRRip</a>
-    </div>
-  </div>
-</nav>
 
-<script>
-  // JavaScript to handle dynamic category loading can be added here
-</script>
+  <div class="section" id="screenshots-section" style="display:none;">
+    <h2>Screenshots</h2>
+    <div class="screenshots" id="screenshots"></div>
+  </div>
 
+  <div class="section" id="cast-section" style="display:none;">
+    <h2>Cast</h2>
+    <div class="cast-list" id="cast-list"></div>
+  </div>
+
+  <div class="section" id="reviews-section" style="display:none;">
+    <h2>User Reviews</h2>
+    <div id="reviews"></div>
+  </div>
+
+  <a class="ad-link" href="https://www.profitableratecpm.com/i8qmzz1p?key=89e145d892a498d83ea6c3fdaf64e12a" target="_blank" rel="noopener noreferrer">
+    ✨ Help us generate more reviews – Click here
+  </a>
+
+  <script>
+    const apiKey = "97d6ca828654b15d8222197a0c5fcae5";
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    const type = params.get("type") || "movie";
+
+    if (!id) {
+      document.body.innerHTML = "<h1>Invalid movie/show ID</h1>";
+      throw new Error("No ID provided");
+    }
+
+    async function fetchDetails() {
+      const detailsUrl = `https://api.themoviedb.org/3/${type}/${id}?api_key=${apiKey}&language=en-US`;
+      const creditsUrl = `https://api.themoviedb.org/3/${type}/${id}/credits?api_key=${apiKey}`;
+      const imagesUrl = `https://api.themoviedb.org/3/${type}/${id}/images?api_key=${apiKey}`;
+      const reviewsUrl = `https://api.themoviedb.org/3/${type}/${id}/reviews?api_key=${apiKey}&language=en-US&page=1`;
+
+      const [detailsRes, creditsRes, imagesRes, reviewsRes] = await Promise.all([
+        fetch(detailsUrl),
+        fetch(creditsUrl),
+        fetch(imagesUrl),
+        fetch(reviewsUrl)
+      ]);
+
+      const details = await detailsRes.json();
+      const credits = await creditsRes.json();
+      const images = await imagesRes.json();
+      const reviews = await reviewsRes.json();
+
+      document.getElementById("title").textContent = details.title || details.name || "No title";
+      document.getElementById("poster").src = details.poster_path ? `https://image.tmdb.org/t/p/w400${details.poster_path}` : "";
+      document.getElementById("poster").alt = details.title || details.name;
+
+      document.getElementById("date").textContent = details.release_date || details.first_air_date || "N/A";
+      document.getElementById("rating").textContent = details.vote_average || "N/A";
+      document.getElementById("overview").textContent = details.overview || "No overview available.";
+
+      // Screenshots
+      if (images.backdrops && images.backdrops.length > 0) {
+        const screenshotsSection = document.getElementById("screenshots-section");
+        const screenshotsDiv = document.getElementById("screenshots");
+        screenshotsDiv.innerHTML = "";
+        images.backdrops.slice(0, 8).forEach(img => {
+          const imgEl = document.createElement("img");
+          imgEl.src = `https://image.tmdb.org/t/p/w500${img.file_path}`;
+          imgEl.alt = "Screenshot";
+          screenshotsDiv.appendChild(imgEl);
+        });
+        screenshotsSection.style.display = "block";
+      }
+
+      // Cast
+      if (credits.cast && credits.cast.length > 0) {
+        const castSection = document.getElementById("cast-section");
+        const castList = document.getElementById("cast-list");
+        castList.innerHTML = "";
+        credits.cast.slice(0, 10).forEach(person => {
+          const castItem = document.createElement("div");
+          castItem.className = "cast-item";
+          castItem.innerHTML = `
+            <img src="${person.profile_path ? `https://image.tmdb.org/t/p/w185${person.profile_path}` : 'https://via.placeholder.com/80x80?text=No+Image'}" alt="${person.name}">
+            <p>${person.name}</p>
+            <p style="font-size:12px;color:#ccc;">as ${person.character}</p>
+          `;
+          castList.appendChild(castItem);
+        });
+        castSection.style.display = "block";
+      }
+
+      // Reviews
+      if (reviews.results && reviews.results.length > 0) {
+        const reviewsSection = document.getElementById("reviews-section");
+        const reviewsDiv = document.getElementById("reviews");
+        reviewsDiv.innerHTML = "";
+        reviews.results.forEach(review => {
+          const reviewEl = document.createElement("div");
+          reviewEl.style.marginBottom = "15px";
+          reviewEl.innerHTML = `
+            <p><strong>${review.author}:</strong></p>
+            <p>${review.content}</p>
+            <hr style="border-color:#444" />
+          `;
+          reviewsDiv.appendChild(reviewEl);
+        });
+        reviewsSection.style.display = "block";
+      }
+    }
+
+    fetchDetails();
+  </script>
 </body>
 </html>
