@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,11 +45,28 @@
       margin-top: 10px;
       display: inline-block;
     }
+    /* 🔔 Disclaimer Style */
+    .disclaimer {
+      background: #222;
+      color: #ff5555;
+      padding: 15px;
+      margin-top: 30px;
+      border-radius: 10px;
+      font-size: 14px;
+      text-align: center;
+      border: 1px solid #ff5555;
+    }
   </style>
 </head>
 <body>
   <h1>🔥 Latest Trending Movies</h1>
   <div id="movies"></div>
+
+  <!-- ✅ Disclaimer Added -->
+  <div class="disclaimer">
+    ⚠️ Disclaimer: This site does not host or provide any movie files.  
+    All movie details and posters are fetched from the official TMDb API for informational purposes only.
+  </div>
 
   <script>
     const apiKey = "97d6ca828654b15d8222197a0c5fcae5";
