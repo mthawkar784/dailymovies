@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Latest Movies Download</title>
+  <title>Movie & Web Series Reviews</title>
   <style>
     body {
       background-color: #0f0f0f;
@@ -21,66 +21,87 @@
       padding: 15px;
       border-radius: 10px;
       display: flex;
-      align-items: center;
+      flex-direction: column;
     }
-    .poster {
-      width: 100px;
-      margin-right: 15px;
+    .movie img {
+      width: 200px;
       border-radius: 5px;
-    }
-    .info {
-      flex: 1;
+      margin-bottom: 10px;
     }
     .info h3 {
-      margin: 0;
       color: #ff9900;
+      margin: 0 0 5px 0;
     }
-    .download-btn {
+    .info p {
+      margin: 5px 0;
+    }
+    .ad-link {
       background-color: #ffcc00;
       color: #000;
       padding: 10px 15px;
       border-radius: 5px;
       text-decoration: none;
       font-weight: bold;
-      margin-top: 10px;
       display: inline-block;
+      margin-top: 10px;
+    }
+    .disclaimer {
+      margin-top: 40px;
+      font-size: 14px;
+      text-align: center;
+      color: #999;
     }
   </style>
 </head>
 <body>
-  <h1>🔥 Latest Trending Movies</h1>
+  <h1>🎬 Movie & Web Series Reviews</h1>
   <div id="movies"></div>
+
+  <div class="disclaimer">
+    <p><strong>Disclaimer:</strong> This is a review website. We do not host or provide any download links. All content is informational and sourced from public APIs.</p>
+  </div>
 
   <script>
     const apiKey = "97d6ca828654b15d8222197a0c5fcae5";
+    const adLink = "https://www.profitableratecpm.com/i8qmzz1p?key=89e145d892a498d83ea6c3fdaf64e12a";
 
-    async function loadMovies() {
-      const res = await fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=${apiKey}`);
-      const data = await res.json();
-
-      const sorted = data.results.sort((a, b) => new Date(b.release_date) - new Date(a.release_date));
-
+    async function loadReviews() {
       const container = document.getElementById("movies");
-      container.innerHTML = "";
 
-      sorted.forEach(movie => {
-        const poster = movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : "";
+      // Fetch trending movies
+      const movieRes = await fetch(`https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}`);
+      const tvRes = await fetch(`https://api.themoviedb.org/3/trending/tv/week?api_key=${apiKey}`);
+      const movies = (await movieRes.json()).results;
+      const shows = (await tvRes.json()).results;
 
-        const movieDiv = document.createElement("div");
-        movieDiv.className = "movie";
-        movieDiv.innerHTML = `
-          <img class="poster" src="${poster}" alt="${movie.title}" />
+      const all = [...movies, ...shows];
+
+      all.sort((a, b) => new Date(b.release_date || b.first_air_date) - new Date(a.release_date || a.first_air_date));
+
+      all.forEach(item => {
+        const title = item.title || item.name;
+        const date = item.release_date || item.first_air_date || 'N/A';
+        const poster = item.poster_path ? `https://image.tmdb.org/t/p/w200${item.poster_path}` : '';
+        const rating = item.vote_average || "N/A";
+        const overview = item.overview || "No review available.";
+
+        const div = document.createElement("div");
+        div.className = "movie";
+        div.innerHTML = `
+          <img src="${poster}" alt="${title}">
           <div class="info">
-            <h3>${movie.title}</h3>
-            <p>Release: ${movie.release_date}</p>
-            <a class="download-btn" href="movie.html?id=${movie.id}">Download</a>
+            <h3>${title}</h3>
+            <p><strong>Release Date:</strong> ${date}</p>
+            <p><strong>Rating:</strong> ⭐ ${rating}/10</p>
+            <p><strong>Review:</strong> ${overview}</p>
+            <a class="ad-link" href="${adLink}" target="_blank">✨ Help us generate more reviews – Click here</a>
           </div>
         `;
-        container.appendChild(movieDiv);
+        container.appendChild(div);
       });
     }
 
-    loadMovies();
+    loadReviews();
   </script>
 </body>
 </html>
