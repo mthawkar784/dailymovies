@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Movie Details</title>
+  <style>
+    body {
+      background-color: #0f0f0f;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+    .poster {
+      width: 100%;
+      max-width: 300px;
+      border-radius: 10px;
+    }
+    h1 {
+      color: #ffcc00;
+    }
+    .download-btn {
+      background-color: #ffcc00;
+      color: #000;
+      padding: 12px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-block;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="movie-details"></div>
+  </div>
+
+  <script>
+    const apiKey = "97d6ca828654b15d8222197a0c5fcae5";
+    const adLink = "https://www.profitableratecpm.com/i8qmzz1p?key=89e145d892a498d83ea6c3fdaf64e12a";
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const movieId = urlParams.get("id");
+
+    async function loadMovie() {
+      const res = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}`);
+      const movie = await res.json();
+
+      const poster = movie.poster_path ? `https://image.tmdb.org/t/p/w300${movie.poster_path}` : "";
+
+      const html = `
+        <img class="poster" src="${poster}" alt="${movie.title}">
+        <h1>${movie.title}</h1>
+        <p><strong>Release Date:</strong> ${movie.release_date}</p>
+        <p><strong>Rating:</strong> ⭐ ${movie.vote_average}/10</p>
+        <p><strong>Overview:</strong> ${movie.overview}</p>
+        <a class="download-btn" href="${adLink}" target="_blank">Download Now</a>
+      `;
+
+      document.getElementById("movie-details").innerHTML = html;
+    }
+
+    loadMovie();
+  </script>
+</body>
+</html>
