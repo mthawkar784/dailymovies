@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Latest Movies Download</title>
+  <title>Latest Movies & Web Series</title>
   <style>
     body {
       background-color: #0f0f0f;
@@ -14,6 +14,13 @@
     h1 {
       text-align: center;
       color: #ffcc00;
+    }
+    .section-title {
+      margin-top: 30px;
+      font-size: 22px;
+      color: #ff9900;
+      border-bottom: 2px solid #ff9900;
+      padding-bottom: 5px;
     }
     .movie {
       background-color: #1a1a1a;
@@ -33,7 +40,7 @@
     }
     .info h3 {
       margin: 0;
-      color: #ff9900;
+      color: #ffcc00;
     }
     .download-btn {
       background-color: #ffcc00;
@@ -45,7 +52,6 @@
       margin-top: 10px;
       display: inline-block;
     }
-    /* 🔔 Disclaimer Style */
     .disclaimer {
       background: #222;
       color: #ff5555;
@@ -59,13 +65,17 @@
   </style>
 </head>
 <body>
-  <h1>🔥 Latest Trending Movies</h1>
+  <h1>🔥 Latest Movies & Web Series</h1>
+  
+  <div class="section-title">🎬 Movies</div>
   <div id="movies"></div>
 
-  <!-- ✅ Disclaimer Added -->
+  <div class="section-title">📺 Web Series</div>
+  <div id="tvshows"></div>
+
   <div class="disclaimer">
-    ⚠️ Disclaimer: This site does not host or provide any movie files.  
-    All movie details and posters are fetched from the official TMDb API for informational purposes only.
+    ⚠️ Disclaimer: This site does not host or provide any movie/series files.  
+    All details and posters are fetched from the official TMDb API for **informational and review purposes only**.
   </div>
 
   <script>
@@ -74,30 +84,40 @@
     async function loadMovies() {
       const res = await fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=${apiKey}`);
       const data = await res.json();
+      showData(data.results, "movies", "movie");
+    }
 
-      const sorted = data.results.sort((a, b) => new Date(b.release_date) - new Date(a.release_date));
+    async function loadTVShows() {
+      const res = await fetch(`https://api.themoviedb.org/3/trending/tv/day?api_key=${apiKey}`);
+      const data = await res.json();
+      showData(data.results, "tvshows", "tv");
+    }
 
-      const container = document.getElementById("movies");
+    function showData(list, containerId, type) {
+      const container = document.getElementById(containerId);
       container.innerHTML = "";
 
-      sorted.forEach(movie => {
-        const poster = movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : "";
+      list.forEach(item => {
+        const title = item.title || item.name;  
+        const date = item.release_date || item.first_air_date; 
+        const poster = item.poster_path ? `https://image.tmdb.org/t/p/w200${item.poster_path}` : "";
 
-        const movieDiv = document.createElement("div");
-        movieDiv.className = "movie";
-        movieDiv.innerHTML = `
-          <img class="poster" src="${poster}" alt="${movie.title}" />
+        const div = document.createElement("div");
+        div.className = "movie";
+        div.innerHTML = `
+          <img class="poster" src="${poster}" alt="${title}" />
           <div class="info">
-            <h3>${movie.title}</h3>
-            <p>Release: ${movie.release_date}</p>
-            <a class="download-btn" href="movie.html?id=${movie.id}">Download</a>
+            <h3>${title}</h3>
+            <p>Release: ${date}</p>
+            <a class="download-btn" href="details.html?type=${type}&id=${item.id}">View Details</a>
           </div>
         `;
-        container.appendChild(movieDiv);
+        container.appendChild(div);
       });
     }
 
     loadMovies();
+    loadTVShows();
   </script>
 </body>
 </html>
